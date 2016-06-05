@@ -1,7 +1,7 @@
 \name{machina}
 \alias{machina}
 \title{
-    Machina
+    Machina Time Series Generation and Backtesting
 }
 \description{
     Machina is an engine that allows for quick delivery of time series data, such as stock pricing info, fundamental data, and more, along with a smart backtester.

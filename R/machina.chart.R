@@ -1,4 +1,3 @@
-
 # Open new chart's window using this chartId
 #
 getRemoteChartUrl <-
