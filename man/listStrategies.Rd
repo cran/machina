@@ -1,6 +1,6 @@
-\name{listModels}
-\alias{listModels}
-\alias{LISTMODELS}
+\name{listStrategies}
+\alias{listStrategies}
+\alias{LISTSTRATEGIES}
 \title{
     listModels
 }
@@ -8,7 +8,7 @@
     This connects to the Machina web service, and gets a list of your models.
 }
 \usage{
-    listModels(verbose = FALSE)
+    listStrategies(verbose = FALSE)
 }
 \arguments{
     \item{verbose}{
@@ -16,7 +16,7 @@
 	}
 }
 \details{
-    This connects to Machina web service, and and gets a list of your models.
+    This connects to Machina web service, and and gets a list of your strategies.
 }
 \value{
     This function returns a list of your models.
@@ -25,6 +25,6 @@
     Michael Gursky
 }
 \examples{
-  #  listModels()
+  #  listStrategies()
 }
-\keyword{Machina list models}
+\keyword{Machina list strategies}

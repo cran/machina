@@ -12,23 +12,23 @@
 	
 	\code{myDemo <-startSession("userName", "pwd")}
 	
-	\strong{startSession:} opens a session enabling you to create new models, or modify existing ones. "userName" and "pwd" are your username and password for Machina. They must be wrapped in quotes(").
+	\strong{startSession:} opens a session enabling you to create new strategys, or modify existing ones. "userName" and "pwd" are your username and password for Machina. They must be wrapped in quotes(").
 	
-	\strong{Open a model}
+	\strong{Open a strategy}
 	
-	A model contains an algo or groups of algos, that you are building into an integrated strategy.
+	A strategy contains an algo or groups of algos, that you are building into an integrated strategy.
 	
-	\code{openModel("myFirstModel")}
+	\code{openstrategy("myFirststrategy")}
 	
-	\strong{openModel:} specifies the name of an existing model, or creates a new one if the model name used is either blank or not found. In this example, the model "myFirstModel" is either opened, or a new one with that name is created.
+	\strong{openstrategy:} specifies the name of an existing strategy, or creates a new one if the strategy name used is either blank or not found. In this example, the strategy "myFirststrategy" is either opened, or a new one with that name is created.
 	
 	\strong{Add an algo row}
 	
-	Adding an algo to your model is as simple as using addRow with your query. 
+	Adding an algo to your strategy is as simple as using addRow with your query. 
 	
 	\code{addRow("spy | savg(10)")}
 	
-	\strong{addRow:} This adds a row to your model. In quotes use Machina query language. Learn more about Machina query language at \href{https://machi.na/docs/}{https://machi.na/docs}.
+	\strong{addRow:} This adds a row to your strategy. In quotes use Machina query language. Learn more about Machina query language at \href{https://machi.na/docs/}{https://machi.na/docs}.
 	
 	\strong{Get more help}
 	

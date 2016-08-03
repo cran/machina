@@ -4,12 +4,12 @@
     addRow
 }
 \description{
-    This connects to the Machina web service, and adds a row to the open model.
+    This connects to the Machina web service, and adds a row to the open strategy.
 }
 \usage{
     addRow(
 		query, 
-		updateModel = TRUE,
+		updateStrategy = TRUE,
 		includeData = FALSE,
 		startDate = NULL,
 		endDate = NULL,
@@ -18,9 +18,9 @@
 }
 \arguments{
 	\item{query}{
-	    This is the machina command, wrapped in quotes, adding a new row to the open model. Learn more about Machina query language at \href{https://machi.na/docs/}{https://machi.na/docs}.
+	    This is the machina command, wrapped in quotes, adding a new row to the open strategy. Learn more about Machina query language at \href{https://machi.na/docs/}{https://machi.na/docs}.
 		}
-	\item{updateModel}{
+	\item{updateStrategy}{
 	    Not required, this will default to TRUE
 	}
     \item{includeData}{
@@ -37,10 +37,10 @@
 		}
 }
 \details{
-    This connects to Machina web service, and adds a row to the open model.
+    This connects to Machina web service, and adds a row to the open strategy.
 }
 \value{
-    This function adds a row to the open model.
+    This function adds a row to the open strategy.
 }
 \author{
     Michael Gursky
@@ -48,4 +48,4 @@
 \examples{
    # addRow("ibm(o) | xavg(25) | ternary")
 }
-\keyword{Machina add row model}
+\keyword{Machina add row strategy}

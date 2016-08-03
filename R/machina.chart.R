@@ -77,7 +77,7 @@ drawRows <-
     for(item in rowsArray){
       rowData<- getRow(item,startDate = startDate,endDate = endDate,includeData = TRUE,verbose = verbose)
       #chartKey<- paste('Chart',item)
-      chartKey<- machina$session$model$query[item]
+      chartKey<- machina$session$strategy$query[item]
       seriesList[[chartKey]]<- rowData$days
     }
     drawSeries(seriesList)

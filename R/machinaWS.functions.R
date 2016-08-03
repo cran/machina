@@ -8,7 +8,7 @@ machina <- new.env(parent = emptyenv())
 #'
 #' Sends message via web service to kafka and receives the corresponding response
 sendAndReceive <-
-  function(msg, needOpenModel=TRUE, verbose=FALSE)
+  function(msg, needOpenStrategy=TRUE, verbose=FALSE)
   {
     if (verbose) cat("sendAndReceive()\n")
 
@@ -18,12 +18,12 @@ sendAndReceive <-
     {
       stop("Web session not started")
     }
-    if (needOpenModel)
+    if (needOpenStrategy)
     {
-      if (is.null(machina$session$modelName)) stop("Model not open")
+      if (is.null(machina$session$strategyName)) stop("Strategy not open")
     }
 
-    url <- buildURL("/api/user/kafka/sendMessageToMW")
+    url <- buildURL("/api/user/kafka/sendMessageToSW")
     if (verbose) cat("POST to ", url, "\n", sep="")
     rsp <-
       POST(
@@ -107,19 +107,19 @@ buildRow <-
 #' Informational:
 #'   $serviceHost        name/port of web service
 #'   $userName           name of user who started the session
-#'   $modelName          name of current model
+#'   $strategyName       name of current strategy
 #'   $initialized        whether session was successfully initialized
 #'
 #' Functional:
-#'   $modelCallback      function to call when model changes
+#'   $strategyCallback   function to call when strategy changes
 #'   $protocol           protocol to use (http or https)
 #'
 #' Maintained by session:
 #'   $accessToken        web session token
-#'   $backtestConfig     last backtest configuration set to or received from model
-#'   $backtestConfigList last list of backtest configurations received from model
-#'   $model              last list of rows retrieved from the model
-#'   $row                last row retrieve from the model
+#'   $backtestConfig     last backtest configuration set to or received from strategy
+#'   $backtestConfigList last list of backtest configurations received from strategy
+#'   $strategy           last list of rows retrieved from the strategy
+#'   $row                last row retrieve from the strategy
 
 #' startSession()
 #'
@@ -127,7 +127,7 @@ buildRow <-
 #'
 #' The service uses the following URLs:
 #'   http://<host>/api/user/authenticateAccount    - login
-#'   http://<host>/api/user/kafka/sendMessageToMW  - interact with ModelWorker
+#'   http://<host>/api/user/kafka/sendMessageToSW  - interact with StrategyWorker
 #'   http://<host>/api/user/logout                 - logout
 #'
 #' @param userName user name
@@ -143,7 +143,7 @@ startSession <-
     password = NULL,
     serviceHost = "account.machi.na",
     protocol = "https",
-    modelCallback = viewModel,
+    strategyCallback = viewStrategy,
     verbose = FALSE)
   {
     if (interactive())
@@ -159,7 +159,7 @@ startSession <-
     machina$session <- list(serviceHost=serviceHost, initialized=FALSE)
     machina$session$userName <- userName
     machina$session$protocol <- protocol
-    machina$session$modelCallback <- modelCallback
+    machina$session$strategyCallback <- strategyCallback
     class(machina$session) <- "machina"
 
     url <- buildURL("/api/user/authenticateAccount")
@@ -200,57 +200,57 @@ endSession <-
     rm("session", envir = machina)
   }
 
-#' listModels()
+#' listStrategies()
 #'
-#' Lists models available to user
+#' Lists strategies available to user
 #
 #' @param verbose whether to produce verbose output (default = FALSE)
 #
-#' @return data.frame with models
-listModels <-
+#' @return data.frame with strategies
+listStrategies <-
   function(verbose = FALSE)
   {
     rsp <-
       sendAndReceive(
-        msg = list(messageType = "ListModels"),
-        needOpenModel = FALSE,
+        msg = list(messageType = "ListStrategies"),
+        needOpenStrategy = FALSE,
         verbose = verbose)
-    return(rsp$models)
+    return(rsp$strategies)
   }
 
-#' openModel()
+#' openStrategy()
 #'
-#' Opens ModelWorker session
+#' Opens StrategyWorker session
 #'
-#' @param modelName mode name of model to open
-#' @param updateModel whether to populate the saved model (default = TRUE)
+#' @param strategyName mode name of strategy to open
+#' @param updateStrategy whether to populate the saved strategy (default = TRUE)
 #' @param verbose whether to produce verbose output (default = FALSE)
 #'
-#' @return row list if updateModel is TRUE, else none
-#'  Side effects: session members updated are $modelName and $model (if updateModel is TRUE)
-openModel <-
+#' @return row list if updateStrategy is TRUE, else none
+#'  Side effects: session members updated are $strategyName and $strategy (if updateStrategy is TRUE)
+openStrategy <-
   function(
-    modelName = NULL,
-    updateModel = TRUE,
+    strategyName = NULL,
+    updateStrategy = TRUE,
     verbose = FALSE)
   {
     if (class(machina$session) != "machina") { stop("Session not open") }
-    if (!is.null(machina$session$modelName)) stop("Model already open")
+    if (!is.null(machina$session$strategyName)) stop("Strategy already open")
 
-    if (is.null(modelName))
+    if (is.null(strategyName))
     {
-      machina$session$modelName <- paste("model", floor(runif(1, 0, 10^12)), sep="")
-      cat("Model name not supplied. Using", machina$session$modelName, "\n")
+      machina$session$strategyName <- paste("strategy", floor(runif(1, 0, 10^12)), sep="")
+      cat("Strategy name not supplied. Using", machina$session$strategyName, "\n")
     }
     else
-      machina$session$modelName <- modelName
+      machina$session$strategyName <- strategyName
 
-    if (is.null(machina$session$modelName)) stop("Model name must be supplied")
+    if (is.null(machina$session$strategyName)) stop("Strategy name must be supplied")
 
-    if (updateModel)
+    if (updateStrategy)
     {
-      dummy <- getModel(verbose)
-      return(machina$session$model)
+      dummy <- getStrategy(verbose)
+      return(machina$session$strategy)
     }
   }
 
@@ -263,123 +263,123 @@ openModel <-
 #      "Sharpe"  = character(0),
 #	      "TradesPerDay" = character(0),
 
-viewModel <-
+viewStrategy <-
   function(verbose = FALSE)
   {
-    if ((class(machina$session$model) != "data.frame") || (nrow(machina$session$model) == 0))
-      cat("Empty model\n")
+    if ((class(machina$session$strategy) != "data.frame") || (nrow(machina$session$strategy) == 0))
+      cat("Empty strategy\n")
     else
     {
-      if (!is.null(machina$session$model$backtest))
+      if (!is.null(machina$session$strategy$backtest))
         rows <-
           data.frame(
-            Query = machina$session$model$query,
-            BacktestName = machina$session$model$backtest$backtestName,
-            PandL = machina$session$model$backtest$pnl,
-            NumTrades = machina$session$model$backtest$ntrades,
-            SharpeRatio = machina$session$model$backtest$sharpe,
-            SortinoRatio = machina$session$model$backtest$sortino)
+            Query = machina$session$strategy$query,
+            BacktestName = machina$session$strategy$backtest$backtestName,
+            PandL = machina$session$strategy$backtest$pnl,
+            NumTrades = machina$session$strategy$backtest$ntrades,
+            SharpeRatio = machina$session$strategy$backtest$sharpe,
+            SortinoRatio = machina$session$strategy$backtest$sortino)
       else
-        rows <- data.frame(Query = machina$session$model$query)
+        rows <- data.frame(Query = machina$session$strategy$query)
       if (verbose) print(rows)
 
       View(
         rows,
-        paste("Model Rows [", machina$session$userName, "/", machina$session$modelName, "]", sep=""))
+        paste("Strategy Rows [", machina$session$userName, "/", machina$session$strategyName, "]", sep=""))
     }
   }
 
-#' closeModel()
+#' closeStrategy()
 #'
-#' Closes ModelWorker session
+#' Closes StrategyWorker session
 #'
 #' @param verbose whether to produce verbose output (default = FALSE)
 #'
-#' @return Side effects: model name is removed from session
-closeModel <-
+#' @return Side effects: strategy name is removed from session
+closeStrategy <-
   function(verbose = FALSE)
   {
-    machina$session$modelName <- NULL
+    machina$session$strategyName <- NULL
   }
 
-#' getModel()
+#' getStrategy()
 #'
-#' Gets model, returning date.frame with information on rows in model
-#' If modelCallback is defined, it is called with the updated model
+#' Gets strategy, returning date.frame with information on rows in strategy
+#' If strategyCallback is defined, it is called with the updated strategy
 #' as its parameter.
 #
 #' @param verbose whether to produce verbose output (default = FALSE)
 #'
-#' @return data.frame listing rows in model
-#'   Side effects: data.frame of rows is stored in session$model
-getModel <-
+#' @return data.frame listing rows in strategy
+#'   Side effects: data.frame of rows is stored in session$strategy
+getStrategy <-
   function(verbose = FALSE)
   {
     rsp <-
       sendAndReceive(
         msg =
           list(
-            messageType = "GetModel",
-            modelName = machina$session$modelName),
+            messageType = "GetStrategy",
+            strategyName = machina$session$strategyName),
         verbose = verbose)
-    machina$session$model <- rsp$rows
-    if (is.function(machina$session$modelCallback))
+    machina$session$strategy <- rsp$rows
+    if (is.function(machina$session$strategyCallback))
     {
-      if (verbose) cat("Calling model callback\n")
-      machina$session$modelCallback(verbose = verbose)
+      if (verbose) cat("Calling strategy callback\n")
+      machina$session$strategyCallback(verbose = verbose)
     }
-    return(machina$session$model)
+    return(machina$session$strategy)
   }
 
-#' clearModel()
+#' clearStrategy()
 #'
-#' Clears model by removing all rows
+#' Clears strategy by removing all rows
 #'
-#' @param updateModel whether to update the row list (default = TRUE)
+#' @param updateStrategy whether to update the row list (default = TRUE)
 #' @param verbose whether to produce verbose output (default = FALSE)
 #'
-#' @return updated (empty) row list if updateModel is TRUE, else none
-#'   Side effects: (empty) data.frame of rows is stored in session$model if updateModel is TRUE
-clearModel <-
-  function(updateModel = TRUE, verbose = FALSE)
+#' @return updated (empty) row list if updateStrategy is TRUE, else none
+#'   Side effects: (empty) data.frame of rows is stored in session$strategy if updateStrategy is TRUE
+clearStrategy <-
+  function(updateStrategy = TRUE, verbose = FALSE)
   {
     rsp <-
       sendAndReceive(
         msg =
           list(
-            messageType = "ClearModel",
-            modelName = machina$session$modelName),
+            messageType = "ClearStrategy",
+            strategyName = machina$session$strategyName),
         verbose = verbose)
-    if (updateModel)
-      return(getModel(verbose))
+    if (updateStrategy)
+      return(getStrategy(verbose))
   }
 
-#' undoModel()
+#' undoStrategy()
 #'
-#' Undoes last operation on model (addRow or clear)
+#' Undoes last operation on strategy (addRow or clear)
 #'
-#' @param updateModel whether to update the row list (default = TRUE)
+#' @param updateStrategy whether to update the row list (default = TRUE)
 #' @param verbose whether to produce verbose output (default = FALSE)
 #'
-#' @return updated (empty) row list if updateModel is TRUE, else none
-#'   Side effects: data.frame of rows is stored in session$model if updateModel is TRUE
-undoModel <-
-  function(updateModel = TRUE, verbose = FALSE)
+#' @return updated (empty) row list if updateStrategy is TRUE, else none
+#'   Side effects: data.frame of rows is stored in session$strategy if updateStrategy is TRUE
+undoStrategy <-
+  function(updateStrategy = TRUE, verbose = FALSE)
   {
     rsp <-
       sendAndReceive(
         msg =
           list(
-            messageType = "Undo",
-            modelName = machina$session$modelName),
+            messageType = "UndoStrategy",
+            strategyName = machina$session$strategyName),
         verbose = verbose)
-    if (updateModel)
-      return(getModel(verbose))
+    if (updateStrategy)
+      return(getStrategy(verbose))
   }
 
 #' addRow()
 #'
-#' Adds row to model
+#' Adds row to strategy
 #'
 #' If inclusion of data is requested, on return $ts has XTS timeseries of data for the row,
 #' in both return value and machina$session$row.
@@ -388,7 +388,7 @@ undoModel <-
 #' in order to reduce the amount of data returned.
 #'
 #' @param query Machina command line query
-#' @param updateModel whether to update the row list (default = TRUE)
+#' @param updateStrategy whether to update the row list (default = TRUE)
 #' @param includeData whether to include data (default = FALSE)
 #' @param startDate start date (default = NULL)
 #' @param endDate end date (default = NULL)
@@ -399,7 +399,7 @@ undoModel <-
 addRow <-
   function(
     query,
-    updateModel = TRUE,
+    updateStrategy = TRUE,
     includeData = FALSE,
     startDate = NULL,
     endDate = NULL,
@@ -410,11 +410,11 @@ addRow <-
         msg =
           list(
             messageType = "AddRow",
-            modelName = machina$session$modelName,
+            strategyName = machina$session$strategyName,
             query = query),
         verbose = verbose)
     machina$session$row <- buildRow(rsp)
-    if (updateModel) dummy <- getModel(verbose)
+    if (updateStrategy) dummy <- getStrategy(verbose)
     if (includeData)
       dummy <-
         getRow(
@@ -454,7 +454,7 @@ getRow <-
     msg <-
       list(
         messageType = "GetRow",
-        modelName = machina$session$modelName,
+        strategyName = machina$session$strategyName,
         rowIndex = rowIndex,
         includeData = as.character(includeData))
     if (!is.null(startDate)) msg$startTime <- paste(startDate, "T0931", sep="")

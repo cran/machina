@@ -30,4 +30,4 @@
 \examples{
    # getRemoteChartUrl()
 }
-\keyword{chart model}
+\keyword{chart strategy}

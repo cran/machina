@@ -45,4 +45,4 @@
 \examples{
   #  rowData <- getRow(21, includeData = TRUE)
 }
-\keyword{Machina get row model}
+\keyword{Machina get row strategy}

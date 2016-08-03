@@ -13,7 +13,7 @@
     	password = NULL,
     	serviceHost = "account.machi.na",
     	protocol = "https",
-    	modelCallback = viewModel,
+    	strategyCallback = viewStrategy,
     	verbose = FALSE
 		)
 }
@@ -30,8 +30,8 @@
     \item{protocol}{
         Not required, defaults to 'https'
     }
-    \item{modelCallback}{
-        Not required, this will default to viewModel
+    \item{strategyCallback}{
+        Not required, this will default to viewStrategy
 		}
     \item{verbose}{
         Not required, this will default to FALSE
