@@ -1,1 +1,1 @@
-# changed 'Model' to 'Strategy' everywhere
+# changed 'GetStrategy' to 'GetRows' in getStrategy function

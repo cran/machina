@@ -1,7 +1,7 @@
 Package: machina
 Type: Package
 Title: Machina Time Series Generation and Backtesting
-Version: 0.1.5
+Version: 0.1.6
 Authors@R: c(
     person("Nelson", "Mark", email = "mnelson@machi.na", role = "aut"),
     person("Gursky", "Michael", email = "mgursky@machi.na", role = "aut"),
@@ -13,11 +13,11 @@ Imports: httr, jsonlite, lubridate, xts, rhandsontable, DT
 License: GPL
 LazyData: TRUE
 NeedsCompilation: no
-Packaged: 2016-08-03 16:41:17 UTC; techcyclist
+Packaged: 2016-10-06 21:26:01 UTC; techcyclist
 Author: Nelson Mark [aut],
   Gursky Michael [aut],
   Kamal Akram [ctb],
   Norton Tim [cre]
 Maintainer: Norton Tim <tnorton@machi.na>
 Repository: CRAN
-Date/Publication: 2016-08-03 20:34:16
+Date/Publication: 2016-10-07 09:19:29

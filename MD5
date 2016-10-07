@@ -1,9 +1,9 @@
-35fb6e6b9387f9bb08cdbc51afe46d46 *DESCRIPTION
+85c9901ad6f7bac21732099edaffddec *DESCRIPTION
 be3fa270b7f633835d94fcbe75dce91d *NAMESPACE
 7fdb33cc97f1ddef8c8d0e1267f8ea57 *R/machina.chart.R
-8703440513ad848aa574ea3937bcd11d *R/machinaWS.functions.R
+de934a3a766ab347d6d79034bfa236c9 *R/machinaWS.functions.R
 5c43a78b466457f495cfe0608591a338 *R/requirePackages.R
-54d8dd1a2f75ee689f9d97c096ca355f *R/versions.R
+22a0257d839cf5b4add33c27011646e8 *R/versions.R
 afda841766ea39a3df92f7737bf83f71 *R/zzz.R
 f871eccfb5a18a20c63deb6d8ca0d160 *man/addRow.Rd
 2fd493dae1ea0868cea16e99e827ef84 *man/clearStrategy.Rd

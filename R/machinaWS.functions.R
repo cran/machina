@@ -319,7 +319,7 @@ getStrategy <-
       sendAndReceive(
         msg =
           list(
-            messageType = "GetStrategy",
+            messageType = "GetRows",
             strategyName = machina$session$strategyName),
         verbose = verbose)
     machina$session$strategy <- rsp$rows
